@@ -1,0 +1,42 @@
+GET _watcher/stats/_all
+
+GET _cat/shards/.watches
+GET _cat/shards/.triggered_watches
+
+POST _watcher/_stop
+
+POST _cluster/reroute (mover la primari a otro nodo)
+{
+  "commands": [
+    {
+      "move": {
+        "index": ".watches",
+        "shard": 0,
+        "from_node": "LGAUDUT30",
+        "to_node": "LGAUDUT32"
+      }
+    },
+    {
+      "move": {
+        "index": ".triggered_watches",
+        "shard": 0,
+        "from_node":"LGAUDUT30" ,
+        "to_node": "LGAUDUT31"
+      }
+    }
+    ]
+}
+
+PUT .watches/_settings
+{
+  "index.auto_expand_replicas": "false"
+
+}
+
+
+PUT .watches/_settings
+{
+  "index.auto_expand_replicas": "0-1"
+}
+
+https://github.com/elastic/elasticsearch/issues/44981

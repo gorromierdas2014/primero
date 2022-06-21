@@ -1,0 +1,92 @@
+PUTPUT /apm-7.15.0-span/_mapping
+{
+  "properties":{
+    "span":{
+      "properties":{
+        "db":{
+          "properties":{
+            "statement":{
+              "type":"text",
+              "fields":{
+                "keyword":{
+                  "type":"keyword"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+POST /apm-7.15.0-span/_rollover/
+
+
+POST _reindex?wait_for_completion=true&timeout=40m
+{
+  "source": {
+    "index": "apm-7.15.0-span-000001"
+  },
+  "dest": {
+    "index": "apm-7.15.0-span-000004"
+  }
+}
+
+
+GET _tasks?detailed=true&actions=*reindex
+POST _tasks/JodVRZcYTymalQnh_qGveg:61007539/_cancel
+
+
+
+PUT _component_template/component_span_db_statement
+{
+  "template": {
+    "mappings": {
+      "properties":{
+        "span":{
+          "properties":{
+            "db":{
+              "properties":{
+                "statement":{
+                  "type":"text",
+                  "fields":{
+                    "keyword":{
+                    "type":"keyword"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Componet template creado para mapear el campo span.db.statement",
+    "used": "se usara en el template template_apm_span_db_statement"
+  }
+}
+
+
+PUT /_index_template/template_apm_span_db_statement 
+{
+  "index_patterns": [ "apm-*-span*" ],
+  "composed_of": [
+    "component_span_db_statement"
+  ],
+  "_meta": { "description": "template para mapear el campo span.db.statement" },
+  "priority" : 500
+}
+
+
+
+
+GET /_cat/templates?v
+
+POST /apm-7.15.0-span/_rollover/
+
+modificar template
+hacer roll
